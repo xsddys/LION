@@ -12,3 +12,6 @@ models/pvcnn/functional/build/
 lion_ckpt
 data/
 datasets/test_data
+results/
+exp/
+docker/

@@ -11,11 +11,14 @@ import os
 def get_path(dataname=None):
     dataset_path = {}
     dataset_path['pointflow'] = [
-        './data/ShapeNetCore.v2.PC15k/'
-
+        './data/ShapeNetCore.v2.PC15k/',
+        './datasets/NPY/'
     ]
     dataset_path['clip_forge_image'] = [
             './data/shapenet_render/'
+            ]
+    dataset_path['mesh'] = [
+            './data/MESH/'
             ]
 
     if dataname is None:
@@ -26,9 +29,19 @@ def get_path(dataname=None):
         for p in dataset_path[dataname]:
             print(f'searching: {dataname}, get: {p}')
             if os.path.exists(p):
+                print(f'[数据路径] 成功找到{dataname}数据集路径: {p}')
                 return p
-        ValueError(
-            f'all path not found for {dataname}, please double check: {dataset_path[dataname]}; or edit the datasets/data_path.py ')
+        # 如果没有找到有效路径，直接返回第一个路径，避免返回None
+        default_path = dataset_path[dataname][0]
+        print(f"[警告] 未找到可用的{dataname}数据路径，使用默认路径: {default_path}")
+        # 检查默认路径是否存在，如果不存在则尝试创建
+        if not os.path.exists(default_path):
+            try:
+                os.makedirs(default_path)
+                print(f"[信息] 已创建默认数据路径: {default_path}")
+            except Exception as e:
+                print(f"[错误] 创建默认路径失败: {str(e)}")
+        return default_path
 
 
 def get_cache_path():

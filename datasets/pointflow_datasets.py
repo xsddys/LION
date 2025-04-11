@@ -102,7 +102,8 @@ class ShapeNet15kPointClouds(Dataset):
                  all_points_mean=None,
                  all_points_std=None,
                  input_dim=3, 
-                 clip_forge_enable=0, clip_model=None
+                 clip_forge_enable=0, clip_model=None,
+                 dataset_type='pointflow'
                  ):
         self.clip_forge_enable = clip_forge_enable 
         if clip_forge_enable:
@@ -110,10 +111,14 @@ class ShapeNet15kPointClouds(Dataset):
             _, self.clip_preprocess = clip.load(clip_model)
         if self.clip_forge_enable:
             self.img_path = []
-            img_path = get_path('clip_forge_image') 
+            img_path = get_path(dataset_type) 
 
         self.normalize_shape_box = normalize_shape_box
-        root_dir = get_path('pointflow')
+        root_dir = get_path(dataset_type)
+        # 确保root_dir不为None
+        if root_dir is None:
+            print(f"错误：无法找到{dataset_type}数据集的路径，将使用默认路径")
+            root_dir = './data/MESH/'
         self.root_dir = root_dir
         logger.info('[DATA] cat: {}, split: {}, full path: {}; norm global={}, norm-box={}',
                     categories, split, self.root_dir, normalize_global, normalize_shape_box)
@@ -128,6 +133,28 @@ class ShapeNet15kPointClouds(Dataset):
 
         if 'all' in categories:
             self.synset_ids = list(cate_to_synsetid.values())
+        elif dataset_type == 'mesh':
+            # 对于自定义数据集，直接使用类别名作为目录名
+            self.synset_ids = self.cates
+            logger.info('[DATA] Using custom category names as directory names: {}', self.synset_ids)
+            # 确保数据目录存在
+            for cate in self.cates:
+                cate_path = os.path.join(root_dir, cate)
+                if not os.path.exists(cate_path):
+                    logger.error(f'Custom dataset category directory not found: {cate_path}')
+                    raise ValueError(f'Custom dataset category directory not found: {cate_path}')
+                split_path = os.path.join(cate_path, split)
+                if not os.path.exists(split_path):
+                    logger.error(f'Custom dataset split directory not found: {split_path}')
+                    raise ValueError(f'Custom dataset split directory not found: {split_path}')
+                else:
+                    # 检查目录中是否有.npy文件
+                    npy_files = [f for f in os.listdir(split_path) if f.endswith('.npy')]
+                    if not npy_files:
+                        logger.warning(f'No .npy files found in: {split_path}')
+                    else:
+                        logger.info(f'[DATA] Found {len(npy_files)} .npy files in: {split_path}')
+            logger.info(f'[DATA] 自定义数据集"{dataset_type}"准备就绪，类别: {self.cates}, 路径: {root_dir}')
         else:
             self.synset_ids = [cate_to_synsetid[c] for c in self.cates]
         subdirs = self.synset_ids
@@ -392,6 +419,7 @@ def get_datasets(cfg, args):
         random_subsample=random_subsample,
         clip_forge_enable=cfg.clip_forge_enable,
         clip_model=cfg.clip_model,
+        dataset_type=cfg.dataset_type,
         **kwargs)
 
     eval_split = getattr(args, "eval_split", "val")
@@ -411,6 +439,7 @@ def get_datasets(cfg, args):
         all_points_std=tr_dataset.all_points_std,
         clip_forge_enable=cfg.clip_forge_enable,
         clip_model=cfg.clip_model,
+        dataset_type=cfg.dataset_type,
     )
     return tr_dataset, te_dataset
 

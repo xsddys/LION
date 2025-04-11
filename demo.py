@@ -39,7 +39,13 @@ else:
     clip_feat = None
 output = lion.sample(1 if clip_feat is None else clip_feat.shape[0], clip_feat=clip_feat)
 pts = output['points']
-img_name = "/tmp/tmp.png"
+
+# 创建结果输出目录（如果不存在）
+output_dir = os.path.join(os.getcwd(), "results")
+os.makedirs(output_dir, exist_ok=True)
+img_name = os.path.join(output_dir, "generated_chair.png")
+
+print(f"保存生成结果到: {img_name}")
 plot_points(pts, output_name=img_name)
 img = Image.open(img_name)
 img.show()

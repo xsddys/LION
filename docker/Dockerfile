@@ -11,11 +11,23 @@
 FROM nvcr.io/nvidia/pytorch:21.12-py3
 ARG PYTHON_VERSION=3.8
 ARG WITH_TORCHVISION=1
+
+# 设置pip镜像源为清华源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 设置apt镜像源为阿里云
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
 RUN python -m pip uninstall torch -y
 RUN python -m pip uninstall torchvision -y
 RUN python -m pip uninstall torchaudio -y
 RUN python -m pip uninstall torchtext -y
-RUN python -m pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+
+# 使用清华源下载PyTorch（修改版本格式）
+RUN pip install torch==1.9.0 torchvision==0.10.0 torchaudio==0.9.0
+RUN pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 --extra-index-url https://download.pytorch.org/whl/cu111
+
 RUN apt-get update
 RUN apt-get install -y build-essential zsh tmux wget
 RUN apt-get install -y libgl1-mesa-glx libusb-1.0-0-dev
@@ -32,7 +44,7 @@ RUN python -m pip install nestargs
 RUN python -m pip install flatten_dict
 #RUN python -m pip uninstall point_cloud_utils
 #RUN python -m pip install git+https://github.com/fwilliams/point-cloud-utils.git
-RUN conda install -y scikit-image
+RUN pip install scikit-image
 RUN apt-get update
 #RUN python -m pip uninstall torch-scatter
 RUN export PATH=/usr/local/cuda-11.1/bin:$PATH
@@ -40,7 +52,8 @@ RUN export CPATH=/usr/local/cuda-11.1/include:$CPATH
 RUN export LD_LIBRARY_PATH=/usr/local/cuda-11.1/lib64:$LD_LIBRARY_PATH
 RUN export DYLD_LIBRARY_PATH=/usr/local/cuda-11.1/lib:$DYLD_LIBRARY_PATH
 
-RUN python -m pip install git+https://github.com/openai/CLIP.git
+# 使用gitee镜像替代GitHub
+RUN python -m pip install git+https://gitee.com/mirrors/CLIP.git
 RUN python -m pip install loguru einops comet_ml calmsize diffusers
 
 #COPY environment.yml .

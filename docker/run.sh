@@ -9,10 +9,12 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION & AFFILIATES is strictly prohibited.
 # ---------------------------------------------------------------
-
+#!/bin/bash
 docker="nvcr.io/nvidian/lion_env:0"
 echo $PWD
-exit
 code_path=$PWD
 docker run --gpus all -p 8081:8081 --ipc=host -v $code_path:$code_path -it $docker bash
+
+# 添加执行权限
+chmod +x ./docker/run.sh
 
