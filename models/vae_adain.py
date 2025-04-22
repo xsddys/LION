@@ -312,13 +312,17 @@ class Model(nn.Module):
             style_latent_shape = (num_samples, self.args.latent_pts.style_dim) 
         else:
             raise NotImplementedError 
-
+        # 如果没有提供噪声，则生成随机噪声
         if len(decomposed_eps) == 0:
+            # 生成局部形状潜在变量 (Local Latent)
             z_local = torch.zeros(*latent_shape).to(
                 torch.device(device_str)).normal_()
+            
+            # 生成全局风格潜在变量 (Global Style)
             z_global = torch.zeros(*style_latent_shape).to(
                 torch.device(device_str)).normal_()
         else:
+            # 如果提供了噪声，则使用提供的噪声
             z_global = decomposed_eps[0] 
             z_local = decomposed_eps[1]
 

@@ -1,4 +1,4 @@
-bash_name: ../exp/tmp/2022_0407_1347_21.sh
+bash_name: /data/intern1_siqichen/lion_exp/tmp/2022_0407_1347_21.sh
 clipforge:
   clip_model: ViT-B/32
   enable: 0
@@ -28,12 +28,12 @@ data:
   normalize_range: false
   normalize_shape_box: false
   normalize_std_per_axis: false
-  num_workers: 4
+  num_workers: 2
   random_subsample: 1
   recenter_per_shape: false
   sample_with_replacement: 1
-  te_max_sample_points: 1024
-  tr_max_sample_points: 1024
+  te_max_sample_points: 2048
+  tr_max_sample_points: 2048
   train_drop_last: 1
   type: datasets.pointflow_datasets
   voxel_size: 0.1
@@ -105,13 +105,13 @@ latent_pts:
   weight_kl_feat: 1.0
   weight_kl_glb: 1.0
   weight_kl_pt: 1.0
-log_dir: ../exp/march/march_prior
-log_name: ../exp/march/march_prior
+log_dir: /data/intern1_siqichen/lion_exp/march/march_prior
+log_name: /data/intern1_siqichen/lion_exp/march/march_prior
 model_config: default
 ngpu: 1
 num_ref: 0
 num_val_samples: 16
-save_dir: ../exp/march/march_prior
+save_dir: /data/intern1_siqichen/lion_exp/march/march_prior
 sde:
   attn_mhead: 0
   attn_mhead_local: -1
@@ -195,7 +195,7 @@ sde:
   update_q_ema: false
   use_adam: true
   use_adamax: false
-  vae_checkpoint: ../exp/0411/march/vae_march/checkpoints/vae_only.pt
+  vae_checkpoint: /data/intern1_siqichen/lion_exp/0411/march/vae_march/checkpoints/vae_only.pt
   warmup_epochs: 20
   weight_decay: 0.0003
   weight_decay_norm_dae: 0.0

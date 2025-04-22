@@ -3,30 +3,29 @@ if [ -z "$1" ]
     echo "Require NGPU input; "
     exit
 fi
-loss="mse_sum"
-NGPU=$1 ## 1 #8
-num_node=2
+loss="mse_Wsum"
+NGPU=$1 ## 1 #8W
+num_node=1
 mem=32
-BS=10 
+BS=8 
 lr=2e-4
 ENT="python train_dist.py --num_process_per_node $NGPU "
 train_vae=False
-
-cmt="car_prior"
-ckpt="/data/intern1_siqichen/lion_exp/0411/car/vae_car/checkpoints/vae_only.pt"
+#cmt="lion"
+#ckpt="./lion_ckpt/unconditional/car/checkpoints/vae_only.pt"
+cmt="cow_prior"
+ckpt="/data/intern1_siqichen/lion_exp/0420/cow/cow_vae/checkpoints/epoch_5999_iters_77999.pt"
 
 # 创建输出目录
 OUTPUT_DIR="/data/intern1_siqichen/lion_exp"
 mkdir -p $OUTPUT_DIR
-# 定义数据路径
-DATA_DIR="./data/ShapeNetCore.v2.PC15k"
-DATA_ARG="data.cates car data.dataset_type pointflow data.data_dir $DATA_DIR data.normalize_global True data.nclass 1"
+
 
 $ENT \
-    --config "./lion_ckpt/unconditional/car/cfg.yml" \
+    --config "./config/cow_prior_cfg.yml" \
     latent_pts.pvd_mse_loss 1 \
     vis_latent_point 1 \
-    num_val_samples 24 \
+    num_val_samples 16 \
     ddpm.ema 1 \
     ddpm.use_bn False ddpm.use_gn True \
     ddpm.time_dim 64 \
@@ -45,6 +44,8 @@ $ENT \
     data.batch_size $BS \
     trainer.type 'trainers.train_2prior' \
     cmt $cmt \
-    $DATA_ARG \
-    log_dir $OUTPUT_DIR/car/car_prior \
-    save_dir $OUTPUT_DIR/car/car_prior
+    data.cates cow data.dataset_type mesh data.data_dir ./data/MESH \
+    data.nclass 1 \
+    data.tr_max_sample_points 2048 data.te_max_sample_points 2048 \
+    log_dir $OUTPUT_DIR/cow/cow_prior \
+    save_dir $OUTPUT_DIR/cow/cow_prior
