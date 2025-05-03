@@ -473,3 +473,15 @@ def get_data_loaders(cfg, args):
         'train_loader': train_loader,
     }
     return loaders
+
+# 在训练前添加代码检查点云数据
+import numpy as np
+import os
+
+mesh_dir = './data/MESH/cow/train/'
+files = [f for f in os.listdir(mesh_dir) if f.endswith('.npy')]
+
+for file in files[:5]:  # 检查前5个文件
+    data = np.load(os.path.join(mesh_dir, file))
+    print(f"File: {file}, Shape: {data.shape}, Contains NaN: {np.isnan(data).any()}, Contains Inf: {np.isinf(data).any()}")
+    print(f"Min: {data.min()}, Max: {data.max()}, Mean: {data.mean()}")

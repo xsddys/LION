@@ -138,7 +138,7 @@ sde:
   epochs: 800
   fir: false
   global_prior_ckpt: ''
-  grad_clip_max_norm: 0.0
+  grad_clip_max_norm: 0.5
   hier_prior: 0
   hypara_mixing_logit: 0
   init_t: 1.0
@@ -196,8 +196,8 @@ sde:
   use_adam: true
   use_adamax: false
   vae_checkpoint: /data/intern1_siqichen/lion_exp/0411/cow/vae_cow/checkpoints/vae_only.pt
-  warmup_epochs: 20
-  weight_decay: 0.0003
+  warmup_epochs: 100
+  weight_decay: 0.0001
   weight_decay_norm_dae: 0.0
   weight_decay_norm_vae: 0.0
 set_detect_anomaly: 0
@@ -232,10 +232,10 @@ trainer:
   loss1_weight_anneal_v: quad
   opt:
     beta1: 0.9
-    beta2: 0.99
+    beta2: 0.999
     ema_decay: 0.9999
-    grad_clip: -1.0
-    lr: 0.001
+    grad_clip: 0.5
+    lr: 0.0005
     lr_min: 0.0001
     momentum: 0.9
     scheduler: ''
@@ -243,7 +243,7 @@ trainer:
     step_decay: 0.998
     type: adam
     vae_lr_warmup_epochs: 0
-    weight_decay: 0.0
+    weight_decay: 0.0001
   rec_balance: 0
   seed: 1
   sn_reg_vae: 0
@@ -251,7 +251,7 @@ trainer:
   type: trainers.train_2prior
   use_grad_scalar: 1
   use_kl_free: 0
-  warmup_epochs: 0
+  warmup_epochs: 100
 use_checkpoint: 0
 vis_latent_point: 1
 viz:

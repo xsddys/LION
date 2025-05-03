@@ -92,7 +92,8 @@ def get_ref_num(cats, luo_split=False):
         'car_ps': 352,
         'all': 1000,
         'mug': 22,
-        'bottle': 43
+        'bottle': 43,
+        'cow': 100  # 添加对cow类别的支持
     }
     if luo_split:
         num_test = {
@@ -105,14 +106,16 @@ def get_ref_num(cats, luo_split=False):
     return num_test[cats]
 
 
-def get_cats(cats):
-    # return the category name for this dataset
-    all_cats = ['airplane', 'chair', 'car', 'all', 'animal', 'mug', 'bottle']
-    for c in all_cats:
-        if c in cats or c == cats:
-            cats = c
-            break
-    assert(cats in all_cats), f'not foud cats for {cats} in {all_cats}'
+def get_cats(dataname):
+    dataname = dataname.lower()
+    cats = dataname.split("_")[0]
+    if "_ps" in dataname:
+        cats = cats + "_ps"
+    
+    all_cats = ["airplane", "airplane_ps", "chair", "chair_ps", "car", "car_ps", 
+               "animal", "all", "mug", "bottle", "cow"]
+    
+    assert(cats in all_cats), f'not found: {cats} in {all_cats}'
     return cats
 
 

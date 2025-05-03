@@ -6,8 +6,8 @@ clipforge:
 cmt: march_prior
 comet_key: ''
 data:
-  batch_size: 8
-  batch_size_test: 4
+  batch_size: 20
+  batch_size_test: 10
   cates: march
   clip_forge_enable: 0
   clip_model: ViT-B/32
@@ -87,17 +87,17 @@ has_shapelatent: 1
 hash: march_prior
 latent_pts:
   ada_mlp_init_scale: 0.1
-  decoder_layer_out_dim: 16
-  encoder_layer_out_dim: 16
-  hid: 32
+  decoder_layer_out_dim: 32
+  encoder_layer_out_dim: 32
+  hid: 64
   latent_dim_ext:
-  - 32
+  - 64
   mask_out_extra_latent: 0
   normalization: bn
   pts_sigma_offset: 0.0
   pvd_mse_loss: 1
   skip_weight: 0.01
-  style_dim: 64
+  style_dim: 128
   style_encoder: models.shapelatent_modules.PointNetPlusEncoder
   style_mlp: ''
   style_prior: models.score_sde.resnet.PriorSEDrop
@@ -132,7 +132,7 @@ sde:
   drop_inactive_var: 0
   dropout: 0.3
   ema_decay: 0.9999
-  embedding_dim: 64
+  embedding_dim: 128
   embedding_scale: 1.0
   embedding_type: positional
   epochs: 800
@@ -168,7 +168,7 @@ sde:
   nhead: 4
   num_cell_per_scale_dae: 8
   num_cell_per_scale_dae_local: 0
-  num_channels_dae: 1024
+  num_channels_dae: 2048
   num_latent_scales: 1
   num_preprocess_blocks: 2
   num_scales_dae: 2
@@ -202,7 +202,7 @@ sde:
   weight_decay_norm_vae: 0.0
 set_detect_anomaly: 0
 shapelatent:
-  decoder_num_points: 1024
+  decoder_num_points: 2048
   decoder_type: models.latent_points_ada.LatentPointDecPVC
   encoder_type: models.latent_points_ada.PointTransPVC
   eps_z_global_only: 1
@@ -220,7 +220,7 @@ test_size: 100
 trainer:
   anneal_kl: 1
   apply_loss_weight_1_kl: 0
-  epochs: 5000
+  epochs: 18000
   kl_balance: 0
   kl_free:
   - 0
@@ -256,8 +256,8 @@ use_checkpoint: 0
 vis_latent_point: 1
 viz:
   log_freq: -1
-  save_freq: 500
-  val_freq: -2000
+  save_freq: 1000
+  val_freq: -10000
   vis_sample_ddim_step: 0
   viz_freq: -200
   viz_order:

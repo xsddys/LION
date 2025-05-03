@@ -1,0 +1,587 @@
+2025-04-23 16:09:18.749 | INFO     | __main__:get_args:169 - load config: ./config/cow_prior_cfg.yml
+2025-04-23 16:09:18.774 | INFO     | __main__:get_args:207 - EXP_ROOT: ../exp + exp name: 0423/cow/3ba6c6h_train_cow_prior_B10, save dir: ../exp/0423/cow/3ba6c6h_train_cow_prior_B10
+2025-04-23 16:09:18.785 | INFO     | __main__:get_args:212 - save config at ../exp/0423/cow/3ba6c6h_train_cow_prior_B10/cfg.yml
+2025-04-23 16:09:18.785 | INFO     | __main__:get_args:215 - log dir: ../exp/0423/cow/3ba6c6h_train_cow_prior_B10
+2025-04-23 16:09:18.785 | INFO     | utils.utils:init_processes:1133 - set MASTER_PORT: 127.0.0.1, MASTER_PORT: 6020
+2025-04-23 16:09:18.785 | INFO     | utils.utils:init_processes:1154 - init_process: rank=0, world_size=1
+2025-04-23 16:09:18.888 | INFO     | __main__:main:29 - use trainer: trainers.train_2prior
+2025-04-23 16:09:20.010 | INFO     | utils.utils:common_init:467 - [common-init] at rank=0, seed=1
+2025-04-23 16:09:20.011 | INFO     | utils.utils:__init__:332 - Not init TFB
+2025-04-23 16:09:20.011 | INFO     | utils.utils:common_init:511 - [common-init] DONE
+2025-04-23 16:09:20.012 | INFO     | utils.model_helper:import_model:106 - import: models.shapelatent_modules.PointNetPlusEncoder
+2025-04-23 16:09:20.019 | INFO     | models.shapelatent_modules:__init__:29 - [Encoder] zdim=128, out_sigma=True; force_att: 0
+2025-04-23 16:09:20.019 | INFO     | utils.model_helper:import_model:106 - import: models.latent_points_ada.PointTransPVC
+2025-04-23 16:09:20.020 | INFO     | models.latent_points_ada:__init__:38 - [Build Unet] extra_feature_channels=0, input_dim=3
+2025-04-23 16:09:20.110 | INFO     | utils.model_helper:import_model:106 - import: models.latent_points_ada.LatentPointDecPVC
+2025-04-23 16:09:20.111 | INFO     | models.latent_points_ada:__init__:241 - [Build Dec] point_dim=3, context_dim=1
+2025-04-23 16:09:20.111 | INFO     | models.latent_points_ada:__init__:38 - [Build Unet] extra_feature_channels=1, input_dim=3
+2025-04-23 16:09:20.199 | INFO     | models.vae_adain:__init__:50 - [Build Model] style_encoder: models.shapelatent_modules.PointNetPlusEncoder, encoder: models.latent_points_ada.PointTransPVC, decoder: models.latent_points_ada.LatentPointDecPVC
+2025-04-23 16:09:25.137 | INFO     | trainers.train_prior:__init__:249 - Load vae_checkpoint: /data/intern1_siqichen/lion_exp/0422/cow/cow_vae/checkpoints/epoch_7999_iters_47999.pt
+2025-04-23 16:09:26.167 | INFO     | trainers.train_prior:__init__:256 - broadcast_params: device=cuda:0
+2025-04-23 16:09:26.167 | INFO     | trainers.base_trainer:build_other_module:712 - no other module to build
+2025-04-23 16:09:26.167 | INFO     | utils.model_helper:import_model:106 - import: models.score_sde.resnet.PriorSEDrop
+2025-04-23 16:09:26.168 | INFO     | models.score_sde.resnet:__init__:135 - [Build Resnet Prior] Has condition input: False; clipforge 0; learn_mixing_logit=1, 
+2025-04-23 16:09:26.168 | INFO     | models.score_sde.resnet:__init__:178 - [temb_fun] embedding_type=positional, embedding_scale=1.0, embedding_dim=128
+2025-04-23 16:09:26.602 | INFO     | utils.model_helper:import_model:106 - import: models.latent_points_ada_localprior.PVCNN2Prior
+2025-04-23 16:09:26.602 | INFO     | models.latent_points_ada_localprior:__init__:43 - [Build Prior Model] nclass=4, embed_dim=64, use_att=True,extra_feature_channels=1, dropout=0.1, time_emb_scales=1.0 num_point=2048
+2025-04-23 16:09:26.602 | INFO     | models.latent_points_ada:__init__:38 - [Build Unet] extra_feature_channels=1, input_dim=3
+2025-04-23 16:09:26.881 | INFO     | utils.diffusion_continuous:__init__:581 - VPSDE: beta_start=0.1, beta_end=20.0, sigma2_0=0.0
+2025-04-23 16:09:26.882 | INFO     | utils.diffusion_pvd:__init__:36 - [Build Discrete Diffusion object] beta_start=0.0001, beta_end=0.02, mode=linear, num_steps=1000
+2025-04-23 16:09:26.888 | INFO     | trainers.train_2prior:build_prior:447 - DAE: ModuleList(
+  (0): PriorSEDrop(
+    (act): SiLU()
+    (temb_fun): PositionalEmbedding()
+    (temb_layer): Sequential(
+      (0): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1))
+      (1): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (input_layer): Conv2d(128, 2048, kernel_size=(1, 1), stride=(1, 1))
+    (output_layer): Conv2d(2048, 128, kernel_size=(1, 1), stride=(1, 1))
+    (all_modules): ModuleList(
+      (0): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+      (1): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+      (2): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+      (3): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+      (4): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+      (5): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+      (6): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+      (7): ResBlockSE_withdropout(2048, 2048, drop=0.300000)
+    )
+  )
+  (1): PVCNN2Prior(
+    (embedf): Sequential(
+      (0): Linear(in_features=64, out_features=64, bias=True)
+      (1): LeakyReLU(negative_slope=0.1, inplace=True)
+      (2): Linear(in_features=64, out_features=64, bias=True)
+    )
+    (sa_layers): ModuleList(
+      (0): Sequential(
+        (0): PVConv(
+          (voxelization): Voxelization(resolution=32, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(4, 32, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 32), Linear(128, 64))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(32, 32, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 32), Linear(128, 64))
+            (6): SE(32, 32)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(4, 32, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 32), Linear(128, 64))
+              (2): Swish()
+            )
+          )
+        )
+        (1): PVConv(
+          (voxelization): Voxelization(resolution=32, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(32, 32, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 32), Linear(128, 64))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(32, 32, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 32), Linear(128, 64))
+            (6): SE(32, 32)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(32, 32, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 32), Linear(128, 64))
+              (2): Swish()
+            )
+          )
+        )
+        (2): PointNetSAModule(
+          num_centers=1024, out_channels=64
+          (groupers): ModuleList(
+            (0): BallQuery(radius=0.1, num_neighbors=32, include coordinates)
+          )
+          (mlps): ModuleList(
+            (0): SharedMLP(
+              (layers): ModuleList(
+                (0): Conv2d(35, 32, kernel_size=(1, 1), stride=(1, 1))
+                (1): AdaGN(GN(8, 32), Linear(128, 64))
+                (2): Swish()
+                (3): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1))
+                (4): AdaGN(GN(8, 64), Linear(128, 128))
+                (5): Swish()
+              )
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): PVConv(
+          (voxelization): Voxelization(resolution=16, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 64, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 64), Linear(128, 128))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(64, 64, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 64), Linear(128, 128))
+            (6): SE(64, 64)
+          )
+          (attn): LinearAttention(
+            (to_qkv): Conv2d(64, 384, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (to_out): Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1))
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 64, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 64), Linear(128, 128))
+              (2): Swish()
+            )
+          )
+        )
+        (1): PointNetSAModule(
+          num_centers=256, out_channels=128
+          (groupers): ModuleList(
+            (0): BallQuery(radius=0.2, num_neighbors=32, include coordinates)
+          )
+          (mlps): ModuleList(
+            (0): SharedMLP(
+              (layers): ModuleList(
+                (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1))
+                (1): AdaGN(GN(8, 64), Linear(128, 128))
+                (2): Swish()
+                (3): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1))
+                (4): AdaGN(GN(8, 128), Linear(128, 256))
+                (5): Swish()
+              )
+            )
+          )
+        )
+      )
+      (2): Sequential(
+        (0): PVConv(
+          (voxelization): Voxelization(resolution=8, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(192, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(192, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+        (1): PointNetSAModule(
+          num_centers=64, out_channels=128
+          (groupers): ModuleList(
+            (0): BallQuery(radius=0.4, num_neighbors=32, include coordinates)
+          )
+          (mlps): ModuleList(
+            (0): SharedMLP(
+              (layers): ModuleList(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1))
+                (1): AdaGN(GN(8, 128), Linear(128, 256))
+                (2): Swish()
+                (3): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1))
+                (4): AdaGN(GN(8, 128), Linear(128, 256))
+                (5): Swish()
+              )
+            )
+          )
+        )
+      )
+      (3): PointNetSAModule(
+        num_centers=16, out_channels=128
+        (groupers): ModuleList(
+          (0): BallQuery(radius=0.8, num_neighbors=32, include coordinates)
+        )
+        (mlps): ModuleList(
+          (0): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv2d(195, 128, kernel_size=(1, 1), stride=(1, 1))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+              (3): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1))
+              (4): AdaGN(GN(8, 128), Linear(128, 256))
+              (5): Swish()
+              (6): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1))
+              (7): AdaGN(GN(8, 128), Linear(128, 256))
+              (8): Swish()
+            )
+          )
+        )
+      )
+    )
+    (global_att): LinearAttention(
+      (to_qkv): Conv2d(128, 768, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (to_out): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (fp_layers): ModuleList(
+      (0): Sequential(
+        (0): PointNetFPModule(
+          (mlp): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(320, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+              (3): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (4): AdaGN(GN(8, 128), Linear(128, 256))
+              (5): Swish()
+            )
+          )
+        )
+        (1): PVConv(
+          (voxelization): Voxelization(resolution=8, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+        (2): PVConv(
+          (voxelization): Voxelization(resolution=8, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+        (3): PVConv(
+          (voxelization): Voxelization(resolution=8, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): PointNetFPModule(
+          (mlp): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(320, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+              (3): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (4): AdaGN(GN(8, 128), Linear(128, 256))
+              (5): Swish()
+            )
+          )
+        )
+        (1): PVConv(
+          (voxelization): Voxelization(resolution=8, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+        (2): PVConv(
+          (voxelization): Voxelization(resolution=8, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+        (3): PVConv(
+          (voxelization): Voxelization(resolution=8, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+      )
+      (2): Sequential(
+        (0): PointNetFPModule(
+          (mlp): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+              (3): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (4): AdaGN(GN(8, 128), Linear(128, 256))
+              (5): Swish()
+            )
+          )
+        )
+        (1): PVConv(
+          (voxelization): Voxelization(resolution=16, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+        (2): PVConv(
+          (voxelization): Voxelization(resolution=16, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 128), Linear(128, 256))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(128, 128, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 128), Linear(128, 256))
+            (6): SE(128, 128)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+            )
+          )
+        )
+      )
+      (3): Sequential(
+        (0): PointNetFPModule(
+          (mlp): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(193, 128, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 128), Linear(128, 256))
+              (2): Swish()
+              (3): Conv1d(128, 128, kernel_size=(1,), stride=(1,))
+              (4): AdaGN(GN(8, 128), Linear(128, 256))
+              (5): Swish()
+              (6): Conv1d(128, 64, kernel_size=(1,), stride=(1,))
+              (7): AdaGN(GN(8, 64), Linear(128, 128))
+              (8): Swish()
+            )
+          )
+        )
+        (1): PVConv(
+          (voxelization): Voxelization(resolution=32, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(64, 64, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 64), Linear(128, 128))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(64, 64, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 64), Linear(128, 128))
+            (6): SE(64, 64)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 64), Linear(128, 128))
+              (2): Swish()
+            )
+          )
+        )
+        (2): PVConv(
+          (voxelization): Voxelization(resolution=32, normalized eps = 0)
+          (voxel_layers): ModuleList(
+            (0): Conv3d(64, 64, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (1): AdaGN(GN(8, 64), Linear(128, 128))
+            (2): Swish()
+            (3): Dropout(p=0.1, inplace=False)
+            (4): Conv3d(64, 64, kernel_size=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))
+            (5): AdaGN(GN(8, 64), Linear(128, 128))
+            (6): SE(64, 64)
+          )
+          (point_features): SharedMLP(
+            (layers): ModuleList(
+              (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+              (1): AdaGN(GN(8, 64), Linear(128, 128))
+              (2): Swish()
+            )
+          )
+        )
+      )
+    )
+    (classifier): ModuleList(
+      (0): SharedMLP(
+        (layers): ModuleList(
+          (0): Conv1d(64, 128, kernel_size=(1,), stride=(1,))
+          (1): AdaGN(GN(8, 128), Linear(128, 256))
+          (2): Swish()
+        )
+      )
+      (1): Dropout(p=0.1, inplace=False)
+      (2): Conv1d(128, 4, kernel_size=(1,), stride=(1,))
+    )
+  )
+)
+2025-04-23 16:09:26.893 | INFO     | trainers.train_2prior:build_prior:448 - DAE: param size = 88.594116M 
+2025-04-23 16:09:26.893 | INFO     | trainers.base_trainer:build_data:152 - start build_data
+2025-04-23 16:09:28.462 | INFO     | datasets.pointflow_datasets:get_datasets:398 - get_datasets: tr_sample_size=2048,  te_sample_size=2048;  random_subsample=1 normalize_global=True normalize_std_per_axix=False normalize_per_shape=False recenter_per_shape=False
+2025-04-23 16:09:28.462 | INFO     | datasets.pointflow_datasets:__init__:123 - [DATA] cat: cow, split: train, full path: ./data/MESH/; norm global=True, norm-box=False
+2025-04-23 16:09:28.462 | INFO     | datasets.pointflow_datasets:__init__:139 - [DATA] Using custom category names as directory names: ['cow']
+2025-04-23 16:09:28.462 | INFO     | datasets.pointflow_datasets:__init__:156 - [DATA] Found 223 .npy files in: ./data/MESH/cow/train
+2025-04-23 16:09:28.462 | INFO     | datasets.pointflow_datasets:__init__:157 - [DATA] 自定义数据集"mesh"准备就绪，类别: ['cow'], 路径: ./data/MESH/
+2025-04-23 16:09:28.463 | INFO     | datasets.pointflow_datasets:__init__:195 - [DATA] number of file [223] under: ./data/MESH/cow/train 
+2025-04-23 16:09:28.516 | INFO     | datasets.pointflow_datasets:__init__:217 - [DATA] Load data time: 0.1s | dir: ['cow'] | sample_with_replacement: 1; num points: 223
+2025-04-23 16:09:28.599 | INFO     | datasets.pointflow_datasets:__init__:283 - [DATA] normalize_global: mean=[-0.02745152 -0.08661913  0.00050223], std=[0.186886]
+2025-04-23 16:09:28.643 | INFO     | datasets.pointflow_datasets:__init__:290 - [DATA] shape=(223, 15000, 3), all_points_mean:=(1, 1, 3), std=(1, 1, 1), max=3.139, min=-2.678; num-pts=2048
+2025-04-23 16:09:28.643 | INFO     | datasets.pointflow_datasets:__init__:123 - [DATA] cat: cow, split: val, full path: ./data/MESH/; norm global=True, norm-box=False
+2025-04-23 16:09:28.643 | INFO     | datasets.pointflow_datasets:__init__:139 - [DATA] Using custom category names as directory names: ['cow']
+2025-04-23 16:09:28.644 | INFO     | datasets.pointflow_datasets:__init__:156 - [DATA] Found 27 .npy files in: ./data/MESH/cow/val
+2025-04-23 16:09:28.644 | INFO     | datasets.pointflow_datasets:__init__:157 - [DATA] 自定义数据集"mesh"准备就绪，类别: ['cow'], 路径: ./data/MESH/
+2025-04-23 16:09:28.644 | INFO     | datasets.pointflow_datasets:__init__:195 - [DATA] number of file [27] under: ./data/MESH/cow/val 
+2025-04-23 16:09:28.649 | INFO     | datasets.pointflow_datasets:__init__:217 - [DATA] Load data time: 0.0s | dir: ['cow'] | sample_with_replacement: 1; num points: 27
+2025-04-23 16:09:28.656 | INFO     | datasets.pointflow_datasets:__init__:290 - [DATA] shape=(27, 15000, 3), all_points_mean:=(1, 1, 3), std=(1, 1, 1), max=3.139, min=-2.678; num-pts=2048
+2025-04-23 16:09:28.657 | INFO     | datasets.pointflow_datasets:get_data_loaders:469 - [Batch Size] train=10, test=10; drop-last=1
+2025-04-23 16:09:28.659 | INFO     | utils.ema:__init__:35 - [EMA] apply=True
+2025-04-23 16:09:28.662 | INFO     | trainers.common_fun_prior_train:init_optimizer_train_2prior:69 - [grad_scalar] enabled=True
+2025-04-23 16:09:28.663 | INFO     | trainers.train_prior:__init__:272 - done init trainer @cuda:0
+2025-04-23 16:09:29.698 | INFO     | trainers.base_trainer:prepare_vis_data:676 - [prepare_vis_data] len of train_loader: 22
+2025-04-23 16:09:30.483 | INFO     | trainers.base_trainer:prepare_vis_data:691 - tr_x: torch.Size([24, 2048, 3]), m_pcs: torch.Size([24, 1, 3]), s_pcs: torch.Size([24, 1, 1]), val_x: torch.Size([24, 2048, 3])
+2025-04-23 16:09:30.498 | INFO     | __main__:main:46 - param size = 22.402731M 
+2025-04-23 16:09:30.498 | INFO     | trainers.base_trainer:set_writer:57 - 
+----------
+[url]: none
+../exp/0423/cow/3ba6c6h_train_cow_prior_B10
+----------
+2025-04-23 16:09:30.501 | INFO     | __main__:main:68 - not find any checkpoint: ../exp/0423/cow/3ba6c6h_train_cow_prior_B10/checkpoints, (exist=False), or snapshot ../exp/0423/cow/3ba6c6h_train_cow_prior_B10/checkpoints/snapshot, (exist=False)
+2025-04-23 16:09:30.501 | INFO     | trainers.base_trainer:train_epochs:173 - [rank=0] Start epoch: 0 End epoch: 18000, batch-size=10 | Niter/epo=22 | log freq=22, viz freq 4400, val freq -10000 
+2025-04-23 16:09:37.135 | INFO     | utils.ema:swap_parameters_with_ema:100 - swap with ema
+2025-04-23 16:09:37.136 | INFO     | trainers.train_prior:vis_sample:601 - Latent shape for prior: [[128, 1, 1], [8192, 1, 1]]; num_val_samples: 24
+2025-04-23 16:09:39.612 | INFO     | utils.diffusion_pvd:run_denoising_diffusion:254 - t=500; shape=[128, 1, 1], num_samples=24, sample shape: torch.Size([24, 128, 1, 1])
+2025-04-23 16:09:41.998 | INFO     | utils.diffusion_pvd:run_denoising_diffusion:254 - t=0; shape=[128, 1, 1], num_samples=24, sample shape: torch.Size([24, 128, 1, 1])
+2025-04-23 16:10:30.785 | INFO     | utils.diffusion_pvd:run_denoising_diffusion:254 - t=500; shape=[8192, 1, 1], num_samples=24, sample shape: torch.Size([24, 8192, 1, 1])
+2025-04-23 16:11:19.010 | INFO     | utils.diffusion_pvd:run_denoising_diffusion:254 - t=0; shape=[8192, 1, 1], num_samples=24, sample shape: torch.Size([24, 8192, 1, 1])
+2025-04-23 16:11:19.764 | INFO     | trainers.train_prior:validate_inspect:132 - cast=True, sample step=1000.0, ode_time=999.9990234375, sample_time=102.62737274169922
+2025-04-23 16:11:23.100 | INFO     | trainers.train_prior:validate_inspect:173 - call recont
+2025-04-23 16:11:31.042 | INFO     | trainers.train_prior:validate_inspect:219 - writer: none
+2025-04-23 16:11:31.043 | INFO     | utils.ema:swap_parameters_with_ema:100 - swap with ema
+2025-04-23 16:11:31.314 | INFO     | trainers.base_trainer:train_epochs:219 - [R0] | E0 iter[  1/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]     1 | [url] none 
+2025-04-23 16:11:36.619 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E0 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]    21 | [url] none | [time] 2.1m (~630h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:11:43.024 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E1 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]    43 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:11:49.498 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E2 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]    65 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:11:55.922 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E3 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]    87 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:02.381 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E4 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   109 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:08.803 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E5 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   131 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:15.259 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E6 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   153 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:21.665 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E7 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   175 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:28.038 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E8 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   197 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:34.428 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E9 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   219 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:40.765 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E10 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   241 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:47.166 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E11 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   263 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:12:53.601 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E12 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   285 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:00.115 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E13 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   307 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:06.521 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E14 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   329 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:12.961 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E15 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   351 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:19.378 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E16 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   373 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:25.908 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E17 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   395 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:32.407 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E18 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   417 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:38.966 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E19 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   439 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:45.411 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E20 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   461 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+/home/intern1_siqichen/.conda/envs/lion38/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:129: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+2025-04-23 16:13:51.847 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E21 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   483 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:13:58.290 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E22 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   505 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:04.627 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E23 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   527 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:11.002 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E24 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   549 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:17.492 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E25 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   571 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:23.924 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E26 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   593 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:30.398 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E27 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   615 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:36.836 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E28 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   637 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:43.293 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E29 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   659 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:49.860 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E30 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   681 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:14:56.353 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E31 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   703 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:02.874 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E32 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   725 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:09.368 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E33 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   747 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:15.773 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E34 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   769 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:22.256 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E35 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   791 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:28.665 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E36 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   813 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:35.173 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E37 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   835 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:41.772 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E38 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   857 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:48.282 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E39 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   879 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:15:54.712 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E40 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   901 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:01.177 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E41 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   923 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:07.473 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E42 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   945 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:13.975 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E43 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   967 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:20.472 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E44 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]   989 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:26.449 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E45 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1011 | [url] none | [time] 0.1m (~29h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:32.724 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E46 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1033 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:39.016 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E47 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1055 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:44.833 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E48 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1077 | [url] none | [time] 0.1m (~29h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:51.390 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E49 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1099 | [url] none | [time] 0.1m (~32h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:16:57.630 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E50 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1121 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:17:03.920 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E51 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1143 | [url] none | [time] 0.1m (~31h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:17:10.065 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E52 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1165 | [url] none | [time] 0.1m (~30h) |[best] 0 -100.000x1e-2 
+2025-04-23 16:17:16.236 | INFO     | trainers.base_trainer:train_epochs:256 - [R0] | E53 iter[ 21/ 22] | [Loss] inf | [exp] ../exp/0423/cow/3ba6c6h_train_cow_prior_B10 | [step]  1187 | [url] none | [time] 0.1m (~30h) |[best] 0 -100.000x1e-2 
+slurmstepd: error: *** JOB 60021 ON inspur0 CANCELLED AT 2025-04-23T16:17:21 ***

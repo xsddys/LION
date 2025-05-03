@@ -13,17 +13,28 @@ ENT="python train_dist.py --num_process_per_node $NGPU "
 train_vae=False
 
 cmt="car_prior"
-ckpt="/data/intern1_siqichen/lion_exp/0411/car/vae_car/checkpoints/vae_only.pt"
+ckpt="/data/intern1_siqichen/lion_exp/0430/car/car_vae_201853/checkpoints/epoch_799_iters_60799.pt"
 
 # 创建输出目录
 OUTPUT_DIR="/data/intern1_siqichen/lion_exp"
 mkdir -p $OUTPUT_DIR
+
+# 确保基本路径正确设置
+DATE=$(date +%m%d)
+EXP_NAME="cow_prior"
+EXP_PATH="$OUTPUT_DIR/$DATE/cow/${EXP_NAME}"
+mkdir -p "$EXP_PATH"
 # 定义数据路径
 DATA_DIR="./data/ShapeNetCore.v2.PC15k"
 DATA_ARG="data.cates car data.dataset_type pointflow data.data_dir $DATA_DIR data.normalize_global True data.nclass 1"
 
 $ENT \
-    --config "./lion_ckpt/unconditional/car/cfg.yml" \
+    --config "./config/car_prior_cfg.yml" \
+    --exp_root $OUTPUT_DIR \
+    exp_name ${DATE}/cow/${EXP_NAME} \
+    log_dir ${EXP_PATH} \
+    save_dir ${EXP_PATH} \
+    log_name ${EXP_PATH} \
     latent_pts.pvd_mse_loss 1 \
     vis_latent_point 1 \
     num_val_samples 24 \

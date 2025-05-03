@@ -1,5 +1,16 @@
 ## shift 'LF' to 'CRLF'
 tr -d '\r' < ./script/mesh_script/train_prior_cow.sh > temp.sh && mv temp.sh ./script/mesh_script/train_prior_cow.sh
+ tr -d '\r' < ./script/train_prior.sh > temp.sh && mv temp.sh ./script/train_prior.sh
+
+tr -d '\r' < ./script/mesh_script/train_prior_march.sh > temp.sh && mv temp.sh ./script/mesh_script/train_prior_march.sh
+
+## 同时执行重建和生成（默认模式）
+python eval_vae.py --checkpoint "../exp/0412/cow/687e07h_hvae_cow_vae_B16/checkpoints/epoch_2499_iters_32499.pt" --num_samples 10
+
+## mesh_prior
+"/data/intern1_siqichen/lion_exp/0426/march/march_vae/checkpoints/epoch_4999_iters_34999.pt"
+"/data/intern1_siqichen/lion_exp/0426/march/march_vae/checkpoints/epoch_2999_iters_20999.pt"
+"/data/intern1_siqichen/lion_exp/0426/march/march_vae/checkpoints/epoch_999_iters_6999.pt"
 
 ## <p align="center">LION: Latent Point Diffusion Models for 3D Shape Generation<br><br> NeurIPS 2022 </p>
 <div align="center">

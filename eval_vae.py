@@ -16,6 +16,55 @@ from utils.eval_helper import compute_NLL_metric
 from PIL import Image
 import torchvision
 
+def save_point_cloud_as_ply(points, filename, normals=None):
+    """Save point cloud data as PLY file for visualization in MeshLab
+    
+    Args:
+        points: Point cloud data with shape (N, 3)
+        filename: Output filename
+        normals: Point normals if available
+    """
+    try:
+        import open3d as o3d
+        # Create point cloud object
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(points)
+        
+        # Add normals if available
+        if normals is not None:
+            pcd.normals = o3d.utility.Vector3dVector(normals)
+        
+        # Save as PLY file
+        o3d.io.write_point_cloud(filename, pcd, write_ascii=True)
+        logger.info(f"Point cloud saved to: {filename}")
+    except ImportError:
+        logger.warning("Open3D not available. Saving PLY file using manual method.")
+        # Manual PLY file creation
+        with open(filename, 'w') as f:
+            # Write header
+            f.write("ply\n")
+            f.write("format ascii 1.0\n")
+            f.write(f"element vertex {len(points)}\n")
+            f.write("property float x\n")
+            f.write("property float y\n")
+            f.write("property float z\n")
+            if normals is not None:
+                f.write("property float nx\n")
+                f.write("property float ny\n")
+                f.write("property float nz\n")
+            f.write("end_header\n")
+            
+            # Write vertices
+            if normals is not None:
+                for i in range(len(points)):
+                    f.write(f"{points[i][0]} {points[i][1]} {points[i][2]} ")
+                    f.write(f"{normals[i][0]} {normals[i][1]} {normals[i][2]}\n")
+            else:
+                for i in range(len(points)):
+                    f.write(f"{points[i][0]} {points[i][1]} {points[i][2]}\n")
+        
+        logger.info(f"Point cloud saved to: {filename}")
+
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='VAE Model Evaluation Tool')
@@ -111,6 +160,10 @@ def main():
             recon_dir = os.path.join(eval_dir, 'reconstruction')
             os.makedirs(recon_dir, exist_ok=True)
             
+            # Create new folder for reconstruction PLY files
+            recon_ply_dir = os.path.join(eval_dir, 'reconstruction_ply')
+            os.makedirs(recon_ply_dir, exist_ok=True)
+            
             for i in range(num_vis):
                 # Combined visualization (side by side)
                 combined_points = normalize_point_clouds([val_x[i], recon_x[i]])
@@ -119,6 +172,17 @@ def main():
                 # Save individual visualization
                 vis_path = os.path.join(recon_dir, f'recon_sample_{i}.png')
                 Image.fromarray(combined_img.transpose(1, 2, 0).astype(np.uint8)).save(vis_path)
+                
+                # Save original and reconstructed point clouds as PLY files
+                original_points = combined_points[0].cpu().numpy()
+                reconstructed_points = combined_points[1].cpu().numpy()
+                
+                # Save as PLY files
+                original_ply_path = os.path.join(recon_ply_dir, f'original_sample_{i}.ply')
+                recon_ply_path = os.path.join(recon_ply_dir, f'recon_sample_{i}.ply')
+                
+                save_point_cloud_as_ply(original_points, original_ply_path)
+                save_point_cloud_as_ply(reconstructed_points, recon_ply_path)
                 
                 # Add to grid images
                 img_list.append(torch.from_numpy(combined_img).float() / 255.0)
@@ -133,20 +197,34 @@ def main():
                 latent_dir = os.path.join(eval_dir, 'latent_space')
                 os.makedirs(latent_dir, exist_ok=True)
                 
+                # Create new folder for latent space PLY files
+                latent_ply_dir = os.path.join(eval_dir, 'latent_space_ply')
+                os.makedirs(latent_ply_dir, exist_ok=True)
+                
                 latent_pts = output['vis/latent_pts']
                 for i in range(num_vis):
                     points = latent_pts[i]
                     points = normalize_point_clouds([points])[0]
                     img = visualize_point_clouds_3d([points], [f'latent_{i}'])
                     
+                    # Save image visualization
                     latent_path = os.path.join(latent_dir, f'latent_sample_{i}.png')
                     Image.fromarray(img.transpose(1, 2, 0).astype(np.uint8)).save(latent_path)
+                    
+                    # Save as PLY file
+                    latent_ply_path = os.path.join(latent_ply_dir, f'latent_sample_{i}.ply')
+                    latent_points = points.cpu().numpy()
+                    save_point_cloud_as_ply(latent_points, latent_ply_path)
     
     # Generation from latent space
     if args.mode in ['generate', 'both']:
         logger.info("==== GENERATION FROM LATENT SPACE ====")
         gen_dir = os.path.join(eval_dir, 'generation')
         os.makedirs(gen_dir, exist_ok=True)
+        
+        # Create new folder for generated point cloud PLY files
+        gen_ply_dir = os.path.join(eval_dir, 'generation_ply')
+        os.makedirs(gen_ply_dir, exist_ok=True)
         
         with torch.no_grad():
             # Get number of samples to generate
@@ -157,12 +235,12 @@ def main():
             
             # Generate samples using the trainer's sample method 
             # B3N format for generated samples
-            # 1. 调用模型的sample方法生成点云
+            # 1. Call model's sample method to generate point clouds
             generated_samples = trainer.sample(num_shapes=num_gen_samples, 
                                               num_points=cfg.data.tr_max_sample_points,
                                               device_str=args.device)
             
-            # 2. 格式转换 (B3N → BN3)
+            # 2. Format conversion (B3N -> BN3)
             # Convert from B3N to BN3 format for visualization
             generated_samples = generated_samples.permute(0, 2, 1).contiguous()
             
@@ -177,6 +255,11 @@ def main():
                 # Save individual visualization
                 gen_path = os.path.join(gen_dir, f'generated_sample_{i}.png')
                 Image.fromarray(img.transpose(1, 2, 0).astype(np.uint8)).save(gen_path)
+                
+                # Save as PLY file
+                gen_ply_path = os.path.join(gen_ply_dir, f'generated_sample_{i}.ply')
+                gen_points = points.cpu().numpy()
+                save_point_cloud_as_ply(gen_points, gen_ply_path)
                 
                 # Save raw point cloud data
                 pc_path = os.path.join(gen_dir, f'generated_sample_{i}.pt')
@@ -193,12 +276,32 @@ def main():
             # Save all generated samples in a single file
             all_samples_path = os.path.join(gen_dir, 'all_generated_samples.pt')
             torch.save(generated_samples.cpu(), all_samples_path)
+            
+            # Additionally save all generated samples in a single combined PLY file (optional, for overall visualization)
+            all_samples_ply_path = os.path.join(gen_ply_dir, 'all_generated_samples.ply')
+            all_points = []
+            for i in range(num_gen_samples):
+                # Normalize each point cloud and add offset to separate them in space
+                sample_points = normalize_point_clouds([generated_samples[i]])[0].cpu().numpy()
+                # Add offset to separate them in 3D space
+                offset = np.array([i * 2.5, 0, 0])  # Separate along x-axis
+                all_points.append(sample_points + offset)
+            
+            # If too many generated samples, just use the first 10 for the combined PLY
+            if num_gen_samples > 10:
+                all_points = all_points[:10]
+            
+            if len(all_points) > 0:
+                combined_points = np.vstack(all_points)
+                save_point_cloud_as_ply(combined_points, all_samples_ply_path)
     
     logger.info(f"Evaluation complete! Results saved in: {eval_dir}")
     if args.mode in ['recon', 'both']:
         logger.info(f"Reconstruction results in: {os.path.join(eval_dir, 'reconstruction')}")
+        logger.info(f"Reconstruction PLY files in: {os.path.join(eval_dir, 'reconstruction_ply')}")
     if args.mode in ['generate', 'both']:
         logger.info(f"Generated samples in: {os.path.join(eval_dir, 'generation')}")
+        logger.info(f"Generated PLY files in: {os.path.join(eval_dir, 'generation_ply')}")
 
 if __name__ == '__main__':
     main()
